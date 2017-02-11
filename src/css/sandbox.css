@@ -1,0 +1,29 @@
+@media (max-width: 768px) {
+    /* Fixes for font awesome icons */
+    .nav .fa { /* Gears */
+        float: left;
+        margin-right: 5px;
+        margin-top: 2px;
+    }
+    .navbar-brand { /* Navicon */
+        padding-top: 18px;
+    }
+}
+
+@media (min-width: 768px) {
+    /* Fixes for font awesome icons */
+    .nav .fa {
+        margin-right: 5px;
+    }
+    .navbar-right .fa {
+        margin-right: 0px;
+    }
+}
+
+#tictactoe > .game-history {
+    display: inline-block;
+}
+
+#tictactoe > .board {
+    display: inline-block;
+}
