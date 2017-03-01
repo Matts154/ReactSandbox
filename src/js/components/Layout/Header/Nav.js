@@ -30,6 +30,9 @@ export default class Nav extends React.Component {
 							<NavItem to="tic-tac-toe" onClick={this.toggleCollapse.bind(this)} router={this.props.router}>
 								<i class="fa fa-gamepad fa-sm"></i>&nbsp;Tic-Tac-Toe
 							</NavItem>
+							<NavItem to="gomoku" onClick={this.toggleCollapse.bind(this)} router={this.props.router}>
+								<i class="fa fa-circle fa-sm"></i>&nbsp;Gomoku
+							</NavItem>
 						</ul>
 					</div>
 				</div>

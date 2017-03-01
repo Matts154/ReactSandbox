@@ -2,7 +2,6 @@ import React from "react";
 
 import Footer from "./Layout/Footer"
 import Header from "./Layout/Header"
-import HelloWorld from "./pages/HelloWorld"
 import ThemeSelector from "./Layout/ThemeSelector"
 
 export default class Layout extends React.Component {

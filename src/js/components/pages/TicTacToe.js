@@ -3,7 +3,7 @@ import React from "react";
 import Board from "./TicTacToe/Board";
 import Score from "./TicTacToe/Score";
 
-export default class TicTacToeV2 extends React.Component {
+export default class TicTacToe extends React.Component {
 	constructor() {
         super();
         this.state = {
