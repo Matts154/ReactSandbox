@@ -5,11 +5,16 @@ import Square from "./Square";
 export default class Board extends React.Component {
 	constructor(){
 		super();
-		const scale = 2;
+		const scale = (window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth)/250;
 		const padding = 5.5 * scale;
+		const circleSize = 2.5 * scale;
+		const squareSize = 9 * scale;
+		console.log(scale);
 		this.state = {
 			scale: scale,
 		 	padding: padding,
+			circleSize: circleSize,
+			squareSize: squareSize
 		}
 	}
 
@@ -17,48 +22,67 @@ export default class Board extends React.Component {
         this.updateCanvas();
     }
 
+	componentDidUpdate(nextProps, nextState) {
+		this.updateCanvas();
+	}
+
     updateCanvas() {
         const ctx = this.refs.canvas.getContext('2d');
 		const scale = this.state.scale;
 		const padding = this.state.padding;
-		const size = 9 * scale;
+		const circleSize = this.state.circleSize;
+		const squareSize = this.state.squareSize;
 
-		ctx.strokeRect(padding, padding, ((size**2)-size) * scale, ((size**2)-size) * scale);
+		ctx.fillStyle = "#DCB77C";
+		ctx.fillRect(0, 0, squareSize * (this.props.size**2), squareSize * (this.props.size**2));
+		ctx.fillStyle = "black";
 
-		for (let i = 0; i < size; i++) {
-			for (let j = 0; j < size; j++) {
+		for (let x = 0; x < this.props.size; x++) {
+			for (let y = 0; y < this.props.size; y++) {
+				const index = y * this.props.size + x;
 
-				if ( i < size - 1 && j < size - 1 ){
-					ctx.strokeRect(padding + i * size * scale, // X position
-								   padding + j * size * scale, // Y position
-								   size * scale, size * scale); // Width, height
+				if ( y < this.props.size - 1 && x < this.props.size - 1 ){
+					ctx.strokeRect(padding + x * squareSize, // X position
+								   padding + y * squareSize, // Y position
+								   squareSize, squareSize); // Width, height
 			   	}
 
-				ctx.fillRect(i * size * scale, j * size * scale, size*1.25, size*1.25);
-
-				if(this.props.board[i*j] !== null){
+				if(this.props.board[index] !== null){
 					ctx.beginPath();
-    				ctx.arc(padding + i * size * scale, padding + j * size * scale, 4 * scale, 0, Math.PI * 2, true); // Outer circle
-					this.props.board[i*j] ? ctx.stroke() : ctx.fill();
+    				ctx.arc(padding + x * squareSize , padding + y * squareSize , circleSize, 0, Math.PI * 2, true); // Outer circle
+
+					this.props.board[index] ? ctx.fillStyle = "white" : ctx.fillStyle = "black";
+
+					ctx.stroke();
+					ctx.fill();
 				}
+				//ctx.fillStyle = "black";
+				//ctx.fillText(index, padding + x * squareSize, padding + y * squareSize);
 			}
 		}
     }
 
 	handleClick(event) {
-	    var rect = event.target.getBoundingClientRect();
-	    var x = event.clientX - rect.left;
-	    var y = event.clientY - rect.top;
-	    console.log("x: " + x + " y: " + y);
+	    const rect = event.target.getBoundingClientRect();
+	    const x = event.clientX - rect.left;
+	    const y = event.clientY - rect.top;
+		const index = (Math.floor((y / this.state.squareSize) % this.props.size) * this.props.size) + Math.floor((x / this.state.squareSize) % this.props.size);
+	    //console.log("x: " + x + " y: " + y);
+		//console.log( Math.floor((x / this.state.squareSize) % this.props.size),
+		// 			 Math.floor((y / this.state.squareSize) % this.props.size) );
+		this.props.onClick(index);
+	}
 
+	handleResize(event) {
+		this.setState({scale: (window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth)/250})
 	}
 
     render() {
         return (
 			<canvas
 				id="gomoku-board"
-				width={(this.props.size**2 * this.state.scale)-this.props.size}
-				height={(this.props.size**2 * this.state.scale)-this.props.size}
+				width={(this.props.size * this.state.squareSize) + this.state.padding-5}
+				height={(this.props.size * this.state.squareSize) + this.state.padding-5}
 				onClick={this.handleClick.bind(this)}
 				ref="canvas"
 			/>
