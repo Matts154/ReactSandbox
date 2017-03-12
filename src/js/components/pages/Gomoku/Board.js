@@ -1,7 +1,5 @@
 import React from "react";
 
-import Square from "./Square";
-
 export default class Board extends React.Component {
 	constructor(){
 		super();
@@ -28,26 +26,27 @@ export default class Board extends React.Component {
 
     updateCanvas() {
         const ctx = this.refs.canvas.getContext('2d');
+		const size = this.props.size;
 		const scale = this.state.scale;
 		const padding = this.state.padding;
 		const circleSize = this.state.circleSize;
 		const squareSize = this.state.squareSize;
 
-		ctx.fillStyle = "#DCB77C";
-		ctx.fillRect(0, 0, squareSize * (this.props.size**2), squareSize * (this.props.size**2));
+		ctx.fillStyle = this.props.backgroundColor;
+		ctx.fillRect(0, 0, squareSize * (size**2), squareSize * (size**2));
 		ctx.fillStyle = "black";
 
-		for (let x = 0; x < this.props.size; x++) {
-			for (let y = 0; y < this.props.size; y++) {
-				const index = y * this.props.size + x;
+		for (let x = 0; x < size; x++) {
+			for (let y = 0; y < size; y++) {
+				const index = y * size + x;
 
-				if ( y < this.props.size - 1 && x < this.props.size - 1 ){
-					ctx.strokeRect(padding + x * squareSize, // X position
-								   padding + y * squareSize, // Y position
+				if ( y < size - 1 && x < size - 1 ) {
+					ctx.strokeRect(Math.floor(padding + x * squareSize), // X position
+								   Math.floor(padding + y * squareSize), // Y position
 								   squareSize, squareSize); // Width, height
 			   	}
 
-				if(this.props.board[index] !== null){
+				if(this.props.board[index] !== null) {
 					ctx.beginPath();
     				ctx.arc(padding + x * squareSize , padding + y * squareSize , circleSize, 0, Math.PI * 2, true); // Outer circle
 
@@ -56,8 +55,9 @@ export default class Board extends React.Component {
 					ctx.stroke();
 					ctx.fill();
 				}
-				//ctx.fillStyle = "black";
-				//ctx.fillText(index, padding + x * squareSize, padding + y * squareSize);
+
+				// ctx.fillStyle = "black";
+				// ctx.fillText(index, padding + x * squareSize, padding + y * squareSize);
 			}
 		}
     }
@@ -66,10 +66,12 @@ export default class Board extends React.Component {
 	    const rect = event.target.getBoundingClientRect();
 	    const x = event.clientX - rect.left;
 	    const y = event.clientY - rect.top;
-		const index = (Math.floor((y / this.state.squareSize) % this.props.size) * this.props.size) + Math.floor((x / this.state.squareSize) % this.props.size);
+		const size = this.props.size;
+		const squareSize = this.state.squareSize;
+		const index = (Math.floor((y / squareSize) % size) * size) + Math.floor((x / squareSize) % size);
 	    //console.log("x: " + x + " y: " + y);
-		//console.log( Math.floor((x / this.state.squareSize) % this.props.size),
-		// 			 Math.floor((y / this.state.squareSize) % this.props.size) );
+		// console.log( Math.floor((x / squareSize) % size),
+		//  			 (Math.floor((y / squareSize) % size) * size) );
 		this.props.onClick(index);
 	}
 
@@ -81,8 +83,8 @@ export default class Board extends React.Component {
         return (
 			<canvas
 				id="gomoku-board"
-				width={(this.props.size * this.state.squareSize) + this.state.padding-5}
-				height={(this.props.size * this.state.squareSize) + this.state.padding-5}
+				width={(this.props.size * this.state.squareSize) + (this.state.padding * 0.5)}
+				height={(this.props.size * this.state.squareSize) + (this.state.padding * 0.5)}
 				onClick={this.handleClick.bind(this)}
 				ref="canvas"
 			/>

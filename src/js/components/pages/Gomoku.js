@@ -3,9 +3,9 @@ import React from "react";
 import Board from "./Gomoku/Board";
 
 export default class Gomoku extends React.Component {
-	constructor(){
+	constructor() {
 		super();
-		this.size = 20;
+		this.size = 19;
 		this.rowLength = 5;
 
 		this.state = {
@@ -16,7 +16,7 @@ export default class Gomoku extends React.Component {
 		};
 	}
 
-	handleClick(i){
+	handleClick(i) {
 		if ( this.state.board[i] !== null || this.state.hasWon ) { return; }
 
 		let newState = Object.assign(this.state, {
@@ -27,7 +27,7 @@ export default class Gomoku extends React.Component {
 
 		newState.board[i] = this.state.whitesTurn;
 
-		if( this.calculateWinner(newState.board, i) ){
+		if( this.calculateWinner(newState.board, i) ) {
 			newState.status = "Winner: " + (this.state.whitesTurn ? "White!" : "Black!");
 			newState.hasWon = true;
 		}
@@ -36,7 +36,7 @@ export default class Gomoku extends React.Component {
 		console.log("Clicked!", i);
 	}
 
-	calculateWinner(board, position){
+	calculateWinner(board, position) {
 		let lines = [];
 		let winner = null;
 
@@ -51,9 +51,9 @@ export default class Gomoku extends React.Component {
 				const x = i + j;
 
 				horizontal.push(position + x);
-				vertical.push(position + (this.size - 1) * x);
-				posDiagonal.push(position + (this.size - 2) * x);
-				negDiagonal.push(position + this.size * x);
+				vertical.push(position + this.size * x);
+				posDiagonal.push(position + (this.size - 1) * x);
+				negDiagonal.push(position + (this.size + 1) * x);
 			}
 
 			lines = [...lines, horizontal, vertical, posDiagonal, negDiagonal];
@@ -62,15 +62,16 @@ export default class Gomoku extends React.Component {
 		// For each line, see if each piece in that line is the current players.
 		winner = lines.some(function(line) {
 			return line.every(function(p, i, a) {
-
-				// BROKEN! D: Intentional "&& false" so the code isnt executed.
-				if(i > 0 && false) { // Fixing a bug where lines that wrap to new lines were valid.
+				// Fixing a bug where lines that wrap to new lines were valid.
+				if(i > 0) {
 					const curX = Math.floor(p % this.size);
 					const prevX = Math.floor(a[i-1] % this.size);
 					const xDelta = curX - prevX;
-					console.log("curX:", curX, "prevX:", prevX, "xDelta:", xDelta);
 
+					// If the difference between the two X positions on the
+					// board is not 1, then the pieces aren't next to eachother.
 					if (Math.abs(xDelta) > 1) {
+						console.log(line);
 						return false;
 					}
 				}
@@ -99,7 +100,8 @@ export default class Gomoku extends React.Component {
 				<p id="status">{this.state.status}</p>
 				<Board
 					board={this.state.board}
-					size={this.size-1}
+					size={this.size}
+					backgroundColor="#DCB77C"
 					onClick={this.handleClick.bind(this)}
 				/>
 				<br />
